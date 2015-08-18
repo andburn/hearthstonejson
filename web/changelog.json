@@ -1,5 +1,21 @@
 [
 	{
+		"version" : "6.0.0",
+		"when" : "2015-08-18",
+		"patchVersion" : "3.0.0.9786",
+		"changes" : [
+			"Added The Grand Tournament!"
+		]
+	},
+	{
+		"version" : "5.1.1",
+		"when" : "2015-07-29",
+		"patchVersion" : "2.8.0.9554",
+		"changes" : [
+			"Added 2 card backs"
+		]
+	},
+	{
 		"version" : "5.1.0",
 		"when" : "2015-06-15",
 		"patchVersion" : "2.7.0.9166",

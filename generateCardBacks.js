@@ -12,6 +12,7 @@ var base = require("xbase"),
 if(process.argv.length<3 || !fs.existsSync(process.argv[2]))
 {
 	base.error("Usage: node generate.js /path/to/CARD_BACK.xml");
+	base.error("SOURCE LOCATION: Hearthstone/DBF/CARD_BACK.xml");
 	process.exit(1);
 }
 

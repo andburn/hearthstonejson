@@ -138,7 +138,7 @@ var USED_TAGS = ["CardID", "CardName", "CardSet", "CardType", "Faction", "Rarity
 				 "Elite", "Race", "Class", "HowToGetThisCard", "HowToGetThisGoldCard"];
 var IGNORED_TAGS = ["AttackVisualType", "EnchantmentBirthVisual", "EnchantmentIdleVisual", "TargetingArrowText", "DevState", "TriggerVisual", "Recall", "AIMustPlay", "InvisibleDeathrattle"];
 var MECHANIC_TAGS = ["Windfury", "Combo", "Secret", "Battlecry", "Deathrattle", "Taunt", "Stealth", "Spellpower", "Enrage", "Freeze", "Charge", "Overload", "Divine Shield", "Silence", "Morph", "OneTurnEffect", "Poisonous", "Aura", "AdjacentBuff",
-					"HealTarget", "GrantCharge", "ImmuneToSpellpower", "AffectedBySpellPower", "Summoned"];
+					"HealTarget", "GrantCharge", "ImmuneToSpellpower", "AffectedBySpellPower", "Summoned", "Inspire"];
 var KNOWN_TAGS = USED_TAGS.concat(IGNORED_TAGS, MECHANIC_TAGS);
 var ENUMID_TO_NAME =
 {
@@ -198,8 +198,11 @@ var ENUMID_TO_NAME =
 	388 : "SparePart",
 	389 : "UNKNOWN_DuneMaulShaman",
 	380 : "UNKNOWN_Blackrock_Heroes",
+	396 : "UNKNOWN_Grand_Tournement_Fallen_Hero",
+	401 : "UNKNOWN_BroodAffliction",
 	402 : "UNKNOWN_Intense_Gaze",
-	401 : "UNKNOWN_BroodAffliction"
+	403 : "Inspire",
+	404 : "UNKNOWN_Grand_Tournament_Arcane_Blast"
 };
 var BOOLEAN_TYPES = ["Collectible", "Elite"];
 // Fields above that I don't know the actual name for has an UNKNOWN_ prefix
@@ -315,7 +318,10 @@ function getTagValue(Entity, tagName)
 {
 	var value = getTagValue_Actual(Entity, tagName);
 	if(value && typeof value==="string")
+	{
 		value = value.replaceAll(" ", " ");
+		//value = value.replace(/[#$]([0-9]+)/g, "$1");		// The $ comes before a numerical damage value, the # before a numerical heal value
+	}
 
 	return value;
 }
@@ -372,6 +378,7 @@ var TAG_VALUE_MAPS =
 		12 : "Curse of Naxxramas",
 		13 : "Goblins vs Gnomes",
 		14 : "Blackrock Mountain",
+		15 : "The Grand Tournament",
 		16 : "Credits",
 		17 : "Hero Skins",
 		18 : "Tavern Brawl"
