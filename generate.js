@@ -140,6 +140,8 @@ var IGNORED_TAGS = ["AttackVisualType", "EnchantmentBirthVisual", "EnchantmentId
 var MECHANIC_TAGS = ["Windfury", "Combo", "Secret", "Battlecry", "Deathrattle", "Taunt", "Stealth", "Spellpower", "Enrage", "Freeze", "Charge", "Overload", "Divine Shield", "Silence", "Morph", "OneTurnEffect", "Poisonous", "Aura", "AdjacentBuff",
 					"HealTarget", "GrantCharge", "ImmuneToSpellpower", "AffectedBySpellPower", "Summoned", "Inspire"];
 var KNOWN_TAGS = USED_TAGS.concat(IGNORED_TAGS, MECHANIC_TAGS);
+
+// For new ones, see GAME_TAG with ILSpy in Hearthstone\Hearthstone_Data\Managed\Assembly-CSharp.dll
 var ENUMID_TO_NAME =
 {
 	185 : "CardName",
@@ -148,15 +150,15 @@ var ENUMID_TO_NAME =
 	201 : "Faction",
 	199 : "Class",
 	203 : "Rarity",
-	48 : "Cost",
+	 48 : "Cost",
 	251 : "AttackVisualType",
 	184 : "CardTextInHand",
-	47 : "Atk",
-	45 : "Health",
+	 47 : "Atk",
+	 45 : "Health",
 	321 : "Collectible",
 	342 : "ArtistName",
 	351 : "FlavorText",
-	32 : "TriggerVisual",
+	 32 : "TriggerVisual",
 	330 : "EnchantmentBirthVisual",
 	331 : "EnchantmentIdleVisual",
 	268 : "DevState",
@@ -196,13 +198,13 @@ var ENUMID_TO_NAME =
 	335 : "InvisibleDeathrattle",
 	377 : "UKNOWN_HasOnDrawEffect",
 	388 : "SparePart",
-	389 : "UNKNOWN_DuneMaulShaman",
-	380 : "UNKNOWN_Blackrock_Heroes",
-	396 : "UNKNOWN_Grand_Tournement_Fallen_Hero",
-	401 : "UNKNOWN_BroodAffliction",
-	402 : "UNKNOWN_Intense_Gaze",
+	389 : "Forgetful",
+	380 : "ShownHeroPower",
+	396 : "HeroPowerDamage",
+	401 : "EvilGlow",
+	402 : "HideCost",
 	403 : "Inspire",
-	404 : "UNKNOWN_Grand_Tournament_Arcane_Blast"
+	404 : "ReceivesDoubleSpellDamageBonus"
 };
 var BOOLEAN_TYPES = ["Collectible", "Elite"];
 // Fields above that I don't know the actual name for has an UNKNOWN_ prefix
@@ -368,12 +370,15 @@ var TAG_VALUE_MAPS =
 {
 	"CardSet" :
 	{
-		2 : "Basic",
-		3 : "Classic",
-		4 : "Reward",
-		5 : "Missions",
-		7 : "System",
-		8 : "Debug",
+		 0 : undefined,
+		 1 : "Test Temporary",
+		 2 : "Basic",
+		 3 : "Classic",
+		 4 : "Reward",
+		 5 : "Missions",
+		 6 : "Demo",
+		 7 : "System",
+		 8 : "Debug",
 		11 : "Promotion",
 		12 : "Curse of Naxxramas",
 		13 : "Goblins vs Gnomes",
@@ -385,15 +390,21 @@ var TAG_VALUE_MAPS =
 	},
 	"CardType" :
 	{
-		3 : "Hero",
-		4 : "Minion",
-		5 : "Spell",
-		6 : "Enchantment",
-		7 : "Weapon",
+		 0 : undefined,
+		 1 : "Game",
+		 2 : "Player",
+		 3 : "Hero",
+		 4 : "Minion",
+		 5 : "Spell",
+		 6 : "Enchantment",
+		 7 : "Weapon",
+		 8 : "Item",
+		 9 : "Totem",
 		10 : "Hero Power"
 	},
 	"Faction" :
 	{
+		0 : undefined,
 		1 : "Horde",
 		2 : "Alliance",
 		3 : "Neutral"
@@ -409,25 +420,43 @@ var TAG_VALUE_MAPS =
 	},
 	"Race" :
 	{
+		 1 : "Blood Elf",
+		 2 : "Draenei",
+		 3 : "Dwarf",
+		 4 : "Gnome",
+		 5 : "Goblin",
+		 6 : "Human",
+		 7 : "Night Elf",
+		 8 : "Orc",
+		 9 : "Tauren",
+		10 : "Troll",
+		11 : "Undead",
+		12 : "Worgen",
+		13 : "Goblin2",
 		14 : "Murloc",
 		15 : "Demon",
+		16 : "Scourge",
+		17 : "Mech",
+		18 : "Elemental",
+		19 : "Ogre",
 		20 : "Beast",
 		21 : "Totem",
+		22 : "Nerubian",
 		23 : "Pirate",
 		24 : "Dragon",
-		17 : "Mech"
 	},
 	"Class" :
 	{
-		0 : undefined,
-		2 : "Druid",
-		3 : "Hunter",
-		4 : "Mage",
-		5 : "Paladin",
-		6 : "Priest",
-		7 : "Rogue",
-		8 : "Shaman",
-		9 : "Warlock",
+		 0 : undefined,
+		 1 : "Death Knight",
+		 2 : "Druid",
+		 3 : "Hunter",
+		 4 : "Mage",
+		 5 : "Paladin",
+		 6 : "Priest",
+		 7 : "Rogue",
+		 8 : "Shaman",
+		 9 : "Warlock",
 		10 : "Warrior",
 		11 : "Dream"
 	}
