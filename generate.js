@@ -24,7 +24,7 @@ var OUT_PATH_TO_CARDXML = path.join(OUT_PATH_TO_EXTRACTED_DATA, "Win");
 var CARDXML_FILE_NAME = "cardxml0.unity3d";
 var CARDXML_DIR_NAME = path.basename(CARDXML_FILE_NAME, path.extname(CARDXML_FILE_NAME));
 var MPQEXTRACTOR_PATH = path.join(__dirname, "MPQExtractor", "build", "bin", "MPQExtractor");
-var DISUNITY_PATH = path.join(__dirname, "disunity", "disunity.jar");
+var DISUNITY_PATH = path.join(__dirname, "disunity", "disunity-dist", "target", "disunity-dist-0.4.0-SNAPSHOT.jar");
 
 tiptoe(
 	function clearOut()

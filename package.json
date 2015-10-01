@@ -7,13 +7,12 @@
 	"dependencies"			:
 	{
 		"xutil"				: "git://github.com/Sembiance/xutil.git",
-		"tiptoe"			: ">= 1.0.0",
+		"tiptoe"			: "~1.0.0",
 		"xbase"				: "git://github.com/Sembiance/xbase.git",
-		"libxmljs"			: ">= 0.9.0",
-		"glob"				: ">= 3.2.9",
-		"rimraf"			: ">= 2.2.6",
-		"moment"			: ">= 2.6.0",
-		"request"			: ">= 2.34.0",
-		"cli-color"			: ">= 0.3.2"
+		"libxmljs"			: "~0.14.3",
+		"glob"				: "~5.0.14",
+		"rimraf"			: "~2.4.3",
+		"moment"			: "~2.10.3",
+		"cli-color"			: "~1.0.0"
 	}
 }

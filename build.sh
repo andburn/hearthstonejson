@@ -1,14 +1,10 @@
 #!/bin/bash
 
-echo "Downloading disunity..."
-rm -rf disunity
-wget https://github.com/ata4/disunity/releases/download/v0.3.4/disunity_v0.3.4.zip
-unzip -d disunity disunity_v0.3.4.zip
-rm disunity_v0.3.4.zip
-
-echo "Building MPQExtractor..."
+echo "Getting submodules MPQExtractor and disunity..."
 git submodule init
 git submodule update
+
+echo "Building MPQExtractor..."
 cd MPQExtractor
 git submodule init
 git submodule update
@@ -17,6 +13,12 @@ cd build
 cmake ..
 make
 cd ..
+cd ..
+
+echo "Building disunity..."
+cd disunity
+mvn compile
+mvn package
 cd ..
 
 echo "Installing NPM modules..."
