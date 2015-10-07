@@ -395,15 +395,8 @@
 		</p>
 		<hr>
 		<h1>Source Code<a href="#top">(back to top)</a></h1>
-		<p>Source code used to generate the JSON is available here: <a href="https://github.com/Sembiance/hearthstonejson">https://github.com/Sembiance/hearthstonejson</a><br>
+		<p>Source code used to generate the JSON is available here: <a href="https://github.com/HearthSim/hearthstonejson">https://github.com/HearthSim/hearthstonejson</a><br>
 		<br>
 		</p>
-		<hr>
-		<a name="otherSites"></a>
-		<h1>My Other JSON Sites<a href="#top">(back to top)</a></h1>
-		<table>
-			<tr><td>Magic the Gathering</td><td><a href="http://mtgjson.com">mtgjson.com</a></td></tr>
-			<tr><td>Heroes of the Storm</td><td><a href="http://heroesjson.com">heroesjson.com</a></td></tr>
-		</table>
 	</body>
 </html>
