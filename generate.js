@@ -52,7 +52,7 @@ tiptoe(
 	function extractCardXMLIfNeeded()
 	{
 		base.info("Extracting card XML...");
-		runUtil.run("java", ["-jar", DISUNITY_PATH, "extract", CARDXML_FILE_NAME], {cwd:OUT_PATH_TO_CARDXML, silent : true}, this);
+		extractCardXML(this);
 	},
 	function processLanguages()
 	{
@@ -60,7 +60,7 @@ tiptoe(
 		C.LANGUAGES.serialForEach(function(language, cb)
 		{
 			base.info("Processing language: %s", language);
-			processCards(path.join(OUT_PATH, "cardxml0", "CAB-cardxml0", "TextAsset", language + ".txt"), language, cb);
+			processCards(path.join(OUT_PATH, language + ".txt"), language, cb);
 		}, this);
 	},
 	function saveSets(cards)
@@ -95,6 +95,39 @@ tiptoe(
 		process.exit(0);
 	}
 );
+
+function extractCardXML(cb)
+{
+	var offsets = [];
+	tiptoe(
+		function loadFile()
+		{
+			fs.readFile(path.join(OUT_PATH, CARDXML_FILE_NAME), null, this);
+		},
+		function findOffsets(buffer)
+		{
+	    for (var i = 0; i < buffer.length; i++) {
+	      if (buffer[i] == 0x3c && buffer.slice(i, i + 10).toString("utf8") == "<CardDefs>") {
+					offsets.push(i);
+	      }
+	    }
+			return buffer;
+		},
+		function extractXml(buffer)
+	  {
+	    offsets.forEach(function(offset)
+	    {
+	      var name = buffer.slice(offset - 8, offset - 4).toString("utf8");
+	      var size = buffer.readInt32LE(offset - 4);
+				fs.writeFile(path.join(OUT_PATH, name + ".txt"), buffer.slice(offset, offset + size), null, this.parallel());
+	    }, this);
+	  },
+		function finish(err)
+		{
+			return setImmediate(function() { cb(err); });
+		}
+	);
+}
 
 function saveSet(cards, language, cb)
 {
