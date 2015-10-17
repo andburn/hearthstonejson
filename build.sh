@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Getting submodules MPQExtractor and disunity..."
+echo "Getting submodule MPQExtractor..."
 git submodule init
 git submodule update
 
@@ -15,12 +15,6 @@ make
 cd ..
 cd ..
 
-echo "Building disunity..."
-cd disunity
-mvn compile
-mvn package
-cd ..
-
 echo "Installing NPM modules..."
 npm install
 
@@ -28,4 +22,3 @@ echo "Linking C.js..."
 cd node_modules
 ln -s ../shared/C.js
 cd ..
-
