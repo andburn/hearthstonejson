@@ -1,9 +1,8 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<!--[if IE]><![endif]-->
+<!DOCTYPE html>
 <html>
 	<head>
 		<title>{title}</title>
-		<link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> 
+		<link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
 		<link type="text/css" rel="stylesheet" href="index.css">
 		<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
 		<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
@@ -12,25 +11,25 @@
 	<body><a name="top"></a>
 		<script type="text/javascript" src="rainbow-custom.min.js"></script>
 		<center><h1 style="font-size: 240%;">Hearthstone JSON</h1></center>
-		<p style="margin-top: 1.0em;">This project provides up to date <a href="http://us.battle.net/hearthstone/en/">Hearthstone</a> card data in <a href="http://www.json.org/">JSON</a> format for developers to easily use in their projects.<br>
-		<br>
-		For more details see: <a href="#exampleCard">Example Card</a> and <a href="#documentation">Documentation</a><br>
-		<br>
-		Bugs or feedback? See git repo at <a href="https://github.com/HearthSim/hearthstonejson">github.com/HearthSim/hearthstonejson</a><br>
+		<p style="margin-top: 1.0em;">This project provides up to date <a href="http://us.battle.net/hearthstone/en/">Hearthstone</a> card data in <a href="http://www.json.org/">JSON</a> format for developers to easily use in their projects.<br/>
+		<br/>
+		For more details see: <a href="#exampleCard">Example Card</a> and <a href="#documentation">Documentation</a><br/>
+		<br/>
+		Bugs or feedback? See git repo at <a href="https://github.com/HearthSim/hearthstonejson">github.com/HearthSim/hearthstonejson</a><br/>
 		</p>
-		<br>
-		<br>
+		<br/>
+		<br/>
 		<h2>Current Version: <span class="value">{version}</span></h2>
 		<h2>&nbsp;&nbsp;Patch Version: <span class="value">{patchVersion}</span></h2>
 		<h2>&nbsp;&nbsp;&nbsp;Last Updated: <span class="value">{lastUpdated}</span><a href="#changeLog">(change log)</a></h2>
-		<br>
-		<br>
+		<br/>
+		<br/>
 		<h2 style="display: none;"><span style="color: red; text-decoration: underline;">ALERT:</span> alert message goes here</h2>
-		<br>
+		<br/>
 		<table class="downloads downloadsAll">
 			<thead>
 				<tr>
-					<th colspan="2">Download Card Data<br><span style="font-size: 60%;">(English)</span></th>
+					<th colspan="2">Download Card Data<br/><span style="font-size: 60%;">(English)</span></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -59,7 +58,7 @@
 					</td>
 				</tr>
 				<tr>
-					<th colspan="2"><br><span style="font-size: 70%;">(All Languages)</span></th>
+					<th colspan="2"><br/><span style="font-size: 70%;">(All Languages)</span></th>
 				</tr>
 				<tr>
 					<td class="sizeColLeft">
@@ -82,7 +81,7 @@
 				</tr>
 			</tbody>
 		</table>
-		<br>
+		<br/>
 		<hr>
 		<a name="exampleCard"></a>
 		<h1>Example Card<a href="#top">(back to top)</a></h1>
@@ -115,18 +114,15 @@
 		<hr>
 		<a name="documentation"></a>
 		<h1>Card Documentation<a href="#top">(back to top)</a></h1>
-		<p>All JSON files are UTF8 encoded and may contain UTF8 characters.<br>
-		<br>The 'AllSets.json' file is an object where each key is the set name and the value is an array of the cards in that set.<br>
-		<br>Each individual set file is a JSON array of the cards cards in that set.<br>
-		<br>Each card is a JSON object with key/value pairs. Below you will find a table detailing each key.<br>
-		<br>
-		The cards are sorted by 'name'<br>
-		<br>
-		If a value would be empty (such as playerClass for Neutral cards), then the key will not exist in the object.<br>
-		<br>
-		All card data is extracted directly from the Hearthstone game files.<br>
-		<br>
-		</p>
+		<ul>
+			<li>All JSON files are UTF8 encoded and may contain UTF8 characters.</li>
+			<li>The 'AllSets.json' file is an object where each key is the set name and the value is an array of the cards in that set.</li>
+			<li>Each individual set file is a JSON array of the cards cards in that set.</li>
+			<li>Each card is a JSON object with key/value pairs. Below you will find a table detailing each key.</li>
+			<li>The cards are sorted by <code>name<code>.</li>
+			<li>If a value would be empty (such as playerClass for Neutral cards), then the key will not exist in the object.</li>
+			<li>All card data is extracted directly from the Hearthstone game files.</li>
+		</ul>
 		<table>
 			<thead>
 				<tr>
@@ -154,9 +150,9 @@
 				<tr>
 					<td>rarity</td>
 					<td>"Legendary"</td>
-					<td>The rarity of the card. Example values: Free, Common, Rare, Epic, Legendary<br>
-					Note: Hearthstone internally uses 'Common' rarity on several cards in the Basic set that are obtained for free.<br>
-					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Thus these cards show a 'Common' rarity even though the player gets them freely.</td>
+					<td>The rarity of the card. Example values: Free, Common, Rare, Epic, Legendary<br/>
+					<i>Note: Hearthstone internally uses 'Common' rarity on several cards in the Basic set that are obtained for free.<br/>
+					Thus these cards show a 'Common' rarity even though the player gets them freely.</i></td>
 				</tr>
 				<tr>
 					<td>faction</td>
@@ -243,9 +239,8 @@
 		<hr>
 		<h1>Example Card Back<a href="#top">(back to top)</a></h1>
 		<img src="images/fireside.png" id="cardBackExample">
-		<pre id="cardBackExampleCode"><code data-language="javascript">
-
-
+		<pre id="cardBackExampleCode">
+			<code data-language="javascript">
     {
              "name" : "Fireside",
 
@@ -259,16 +254,17 @@
           "enabled" : true,
                "id" : 4
     }
-		</code></pre>
+			</code>
+		</pre>
 		<hr>
 		<a name="cardBackDocumentation"></a>
 		<h1>Card Back Documentation<a href="#top">(back to top)</a></h1>
-		<p>The 'CardBacks.json' file is an array where each item is an object representing a card back.<br>
-		<br>
-		If a value would be empty, then the key will not exist in the object.<br>
-		<br>
-		All card data is extracted directly from the Hearthstone game files.<br>
-		<br>
+		<p>The 'CardBacks.json' file is an array where each item is an object representing a card back.<br/>
+		<br/>
+		If a value would be empty, then the key will not exist in the object.<br/>
+		<br/>
+		All card data is extracted directly from the Hearthstone game files.<br/>
+		<br/>
 		</p>
 		<table id="cardBackDocumentationTable">
 			<thead>
@@ -325,8 +321,8 @@
 			<li><a href="/json/version.json">/json/version.json</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Current version number for the JSON files</li>
 			<li><a href="/json/patchVersion.json">/json/patchVersion.json</a>&nbsp;&nbsp;&nbsp;&nbsp;Current Hearthstone patch version</li>
 		</ul>
-		<br>
-		<br>
+		<br/>
+		<br/>
 		<hr>
 		<a name="changeLog"></a>
 		<h1>Change Log<a href="#top">(back to top)</a></h1>
@@ -377,10 +373,7 @@
 		<hr>
 		<a name="license"></a>
 		<h1>License and Copyright<a href="#top">(back to top)</a></h1>
-		<p>The JSON files contain data that is Copyright (c) Blizzard Entertainment - All Rights Reserved<br>
-		<br>
-		This website is not affiliated with Blizzard Entertainment in any way.<br>
-		</p>
-		</p>
+		<p>The JSON files contain data that is Copyright &copy; Blizzard Entertainment - All Rights Reserved</p>
+		<p>This website is not affiliated with Blizzard Entertainment in any way.</p>
 	</body>
 </html>
