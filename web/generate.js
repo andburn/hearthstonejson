@@ -154,7 +154,7 @@ tiptoe(
 	},
 	function renderCSS()
 	{
-		stylus.render(fs.readFileSync(path.join(__dirname, "index.styl"), {encoding:"utf8"}), this);
+		stylus(fs.readFileSync(path.join(__dirname, "index.styl"), {encoding:"utf8"})).include(__dirname).render(this);
 	},
 	function saveCSS(css)
 	{
