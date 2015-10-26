@@ -8,7 +8,6 @@ var base = require("xbase"),
 	fs = require("fs"),
 	moment = require("moment"),
 	fileUtil = require("xutil").file,
-	stylus = require("stylus"),
 	glob = require("glob"),
 	path = require("path"),
 	dustUtil = require("xutil").dust,
@@ -151,14 +150,6 @@ tiptoe(
 		fs.writeFile(path.join(WEB_OUT_PATH, "SetList.json"), JSON.stringify(this.data.setNames.sort()), {encoding : "utf8"}, this.parallel());
 		fs.writeFile(path.join(WEB_OUT_PATH, "version.json"), JSON.stringify({version:dustData.version}), {encoding : "utf8"}, this.parallel());
 		fs.writeFile(path.join(WEB_OUT_PATH, "patchVersion.json"), JSON.stringify({version:dustData.patchVersion}), {encoding : "utf8"}, this.parallel());
-	},
-	function renderCSS()
-	{
-		stylus(fs.readFileSync(path.join(__dirname, "index.styl"), {encoding:"utf8"})).include(__dirname).render(this);
-	},
-	function saveCSS(css)
-	{
-		fs.writeFile(path.join(__dirname, "index.css"), css, {encoding:"utf8"}, this);
 	},
 	function finish(err)
 	{
