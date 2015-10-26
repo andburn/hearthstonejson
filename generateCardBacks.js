@@ -9,12 +9,16 @@ var base = require("xbase"),
 	rimraf = require("rimraf"),
 	tiptoe = require("tiptoe");
 
-if(process.argv.length<3 || !fs.existsSync(process.argv[2]))
+var HSDATA_DIR = path.join(__dirname, "hs-data");
+var CARDBACK_PATH = path.join(HSDATA_DIR, "DBF", "CARD_BACK.xml");
+
+if(!fs.existsSync(HSDATA_DIR) || !fs.existsSync(CARDBACK_PATH))
 {
-	base.error("Usage: node generate.js /path/to/CARD_BACK.xml");
-	base.error("SOURCE LOCATION: Hearthstone/DBF/CARD_BACK.xml");
+	base.error("[%s] or [%s] does not exist. Run `updateHSData.sh` first.", HSDATA_DIR, CARDBACK_PATH);
+	base.error("Usage: node generate.js");
 	process.exit(1);
 }
+
 
 var OUT_PATH = path.join(__dirname, "outCardBacks");
 
@@ -76,7 +80,7 @@ function processCardBacks(language, cb)
 	tiptoe(
 		function loadFile()
 		{
-			fs.readFile(process.argv[2], {encoding:"utf8"}, this);
+			fs.readFile(CARDBACK_PATH, {encoding:"utf8"}, this);
 		},
 		function processFile(cardXMLData)
 		{

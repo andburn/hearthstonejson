@@ -1,0 +1,9 @@
+When a new patch hits, here is how you update hearthstonejson.com:
+
+1. Run: `updateHSData.sh`
+2. If a new language, add to C.js 'LANGUAGES' and 'LANGUAGES_FULL'
+3. Run: `node generate.js`
+4. Add new 'web/changelog.json' entry
+5. Run: `node web/generate.js`
+6. Run: `node util/compareReleases.js` to compare newly generated vs JSON on live website
+7. Deploy to web server

@@ -1,6 +1,0 @@
-[submodule "MPQExtractor"]
-	path = MPQExtractor
-	url = https://github.com/Kanma/MPQExtractor.git
-[submodule "disunity"]
-	path = disunity
-	url = https://github.com/ata4/disunity.git

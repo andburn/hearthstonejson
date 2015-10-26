@@ -6,83 +6,66 @@ var base = require("xbase"),
 	C = require("C"),
 	libxmljs = require("libxmljs"),
 	path = require("path"),
-	runUtil = require("xutil").run,
-	fileUtil = require("xutil").file,
 	rimraf = require("rimraf"),
 	tiptoe = require("tiptoe");
 
-if(process.argv.length<3 || !fs.existsSync(process.argv[2]))
+var HSDATA_DIR = path.join(__dirname, "hs-data");
+var CARDDEFS_PATH = path.join(HSDATA_DIR, "CardDefs.xml");
+var CARDBACK_PATH = path.join(HSDATA_DIR, "DBF", "CARD_BACK.xml");
+
+if(!fs.existsSync(HSDATA_DIR) || !fs.existsSync(CARDDEFS_PATH) || !fs.existsSync(CARDDEFS_PATH))
 {
-	base.error("Usage: node generate.js /path/to/base-Win.MPQ or /path/to/cardxml0.unity3d");
+	base.error("[%s] or [%s] or [%s] does not exist. Run `updateHSData.sh` first.", HSDATA_DIR, CARDDEFS_PATH, CARDBACK_PATH);
+	base.error("Usage: node generate.js");
 	process.exit(1);
 }
 
-var MPQ_PATH = process.argv[2];
 var OUT_PATH = path.join(__dirname, "out");
-var OUT_PATH_TO_EXTRACTED_DATA = path.join(OUT_PATH, "Data");
-var OUT_PATH_TO_CARDXML = path.join(OUT_PATH_TO_EXTRACTED_DATA, "Win");
-var CARDXML_FILE_NAME = "cardxml0.unity3d";
-var CARDXML_DIR_NAME = path.basename(CARDXML_FILE_NAME, path.extname(CARDXML_FILE_NAME));
-var MPQEXTRACTOR_PATH = path.join(__dirname, "MPQExtractor", "build", "bin", "MPQExtractor");
-var DISUNITY_PATH = path.join(__dirname, "disunity", "disunity-dist", "target", "disunity-dist-0.4.0-SNAPSHOT.jar");
+var CARDBACK_OUT_PATH = path.join(__dirname, "outCardBacks");
 
 tiptoe(
 	function clearOut()
 	{
-		base.info("Clearing 'out' directory...");
-		rimraf(OUT_PATH, this);
+		base.info("Clearing 'out' and 'outCardBacks' directory...");
+		rimraf(OUT_PATH, this.parallel());
+		rimraf(CARDBACK_OUT_PATH, this.parallel());
 	},
 	function createOut()
 	{
-		fs.mkdir(OUT_PATH, this);
-	},
-	function extractMPQ()
-	{
-		if(MPQ_PATH.endsWith("unity3d"))
-		{
-			OUT_PATH_TO_CARDXML = OUT_PATH;
-			fileUtil.copy(MPQ_PATH, path.join(OUT_PATH, path.basename(MPQ_PATH)), this);
-		}
-		else
-		{
-			base.info("Extracting MPQ...");
-			runUtil.run(MPQEXTRACTOR_PATH, ["-e", "Data\\Win\\" + CARDXML_FILE_NAME, "-f", "-o", OUT_PATH, MPQ_PATH], this);
-		}
-	},
-	function extractCardXMLIfNeeded()
-	{
-		base.info("Extracting card XML...");
-		runUtil.run("java", ["-jar", DISUNITY_PATH, "extract", CARDXML_FILE_NAME], {cwd:OUT_PATH_TO_CARDXML, silent : true}, this);
+		fs.mkdir(OUT_PATH, this.parallel());
+		fs.mkdir(CARDBACK_OUT_PATH, this.parallel());
 	},
 	function processLanguages()
 	{
-		base.info("Processing card languages...");
+		base.info("Cards: Processing card languages...");
 		C.LANGUAGES.serialForEach(function(language, cb)
 		{
-			base.info("Processing language: %s", language);
-			processCards(path.join(OUT_PATH, "cardxml0", "CAB-cardxml0", "TextAsset", language + ".txt"), language, cb);
+			base.info("Cards: Processing language: %s", language);
+			processCards(CARDDEFS_PATH, language, cb);
 		}, this);
 	},
 	function saveSets(cards)
 	{
-		base.info("Saving JSON...");
+		base.info("Cards: Saving JSON...");
 
 		C.LANGUAGES.serialForEach(function(language, cb, i)
 		{
 			saveSet(cards[i], language, cb);
 		}, this);
 	},
-	function cleanup()
+	function processLanguagesCardBacks()
 	{
-		base.info("Cleaning up...");
-		if(fs.existsSync(OUT_PATH_TO_EXTRACTED_DATA))
-			rimraf(OUT_PATH_TO_EXTRACTED_DATA, this.parallel());
-		if(fs.existsSync(path.join(OUT_PATH, CARDXML_DIR_NAME)))
-			rimraf(path.join(OUT_PATH, CARDXML_DIR_NAME), this.parallel());
-		if(fs.existsSync(path.join(OUT_PATH, CARDXML_FILE_NAME)))
-			fs.unlink(path.join(OUT_PATH, CARDXML_FILE_NAME), this.parallel());
+		base.info("Card Backs: Processing card languages...");
+		C.LANGUAGES.serialForEach(processCardBacks, this);
+	},
+	function saveAllCardBacks(allCardBacks)
+	{
+		base.info("Card Backs: Saving JSON...");
 
-		this.parallel()();
+		C.LANGUAGES.serialForEach(function(language, cb, i)
+		{
+			saveCardBacks(allCardBacks[i], language, cb);
+		}, this);
 	},
 	function finish(err)
 	{
@@ -134,84 +117,6 @@ function fixCard(language, card)
 		card.cost = 0;
 }
 
-var USED_TAGS = ["CardID", "CardName", "CardSet", "CardType", "Faction", "Rarity", "Cost", "Atk", "Health", "Durability", "CardTextInHand", "CardTextInPlay", "FlavorText", "ArtistName", "Collectible",
-				 "Elite", "Race", "Class", "HowToGetThisCard", "HowToGetThisGoldCard"];
-var IGNORED_TAGS = ["AttackVisualType", "EnchantmentBirthVisual", "EnchantmentIdleVisual", "TargetingArrowText", "DevState", "TriggerVisual", "Recall", "AIMustPlay", "InvisibleDeathrattle"];
-var MECHANIC_TAGS = ["Windfury", "Combo", "Secret", "Battlecry", "Deathrattle", "Taunt", "Stealth", "Spellpower", "Enrage", "Freeze", "Charge", "Overload", "Divine Shield", "Silence", "Morph", "OneTurnEffect", "Poisonous", "Aura", "AdjacentBuff",
-					"HealTarget", "GrantCharge", "ImmuneToSpellpower", "AffectedBySpellPower", "Summoned", "Inspire"];
-var KNOWN_TAGS = USED_TAGS.concat(IGNORED_TAGS, MECHANIC_TAGS);
-
-// For new ones, see GAME_TAG with ILSpy in Hearthstone\Hearthstone_Data\Managed\Assembly-CSharp.dll
-var ENUMID_TO_NAME =
-{
-	185 : "CardName",
-	183 : "CardSet",
-	202 : "CardType",
-	201 : "Faction",
-	199 : "Class",
-	203 : "Rarity",
-	 48 : "Cost",
-	251 : "AttackVisualType",
-	184 : "CardTextInHand",
-	 47 : "Atk",
-	 45 : "Health",
-	321 : "Collectible",
-	342 : "ArtistName",
-	351 : "FlavorText",
-	 32 : "TriggerVisual",
-	330 : "EnchantmentBirthVisual",
-	331 : "EnchantmentIdleVisual",
-	268 : "DevState",
-	365 : "HowToGetThisGoldCard",
-	190 : "Taunt",
-	364 : "HowToGetThisCard",
-	338 : "OneTurnEffect",
-	293 : "Morph",
-	208 : "Freeze",
-	252 : "CardTextInPlay",
-	325 : "TargetingArrowText",
-	189 : "Windfury",
-	218 : "Battlecry",
-	200 : "Race",
-	192 : "Spellpower",
-	187 : "Durability",
-	197 : "Charge",
-	362 : "Aura",
-	361 : "HealTarget",
-	349 : "ImmuneToSpellpower",
-	194 : "Divine Shield",
-	350 : "AdjacentBuff",
-	217 : "Deathrattle",
-	191 : "Stealth",
-	220 : "Combo",
-	339 : "Silence",
-	212 : "Enrage",
-	370 : "AffectedBySpellPower",
-	240 : "Cant Be Damaged",
-	114 : "Elite",
-	219 : "Secret",
-	363 : "Poisonous",
-	215 : "Overload",
-	340 : "Counter",
-	205 : "Summoned",
-	367 : "AIMustPlay",
-	335 : "InvisibleDeathrattle",
-	377 : "UKNOWN_HasOnDrawEffect",
-	388 : "SparePart",
-	389 : "Forgetful",
-	380 : "ShownHeroPower",
-	396 : "HeroPowerDamage",
-	401 : "EvilGlow",
-	402 : "HideCost",
-	403 : "Inspire",
-	404 : "ReceivesDoubleSpellDamageBonus"
-};
-var BOOLEAN_TYPES = ["Collectible", "Elite"];
-// Fields above that I don't know the actual name for has an UNKNOWN_ prefix
-
-var NAME_TO_ENUMID = Object.swapKeyValues(ENUMID_TO_NAME);
-var IGNORED_TAG_NAMES = ["text", "MasterPower", "Power", "TriggeredPowerHistoryInfo", "EntourageCard"];
-
 function processCards(cardXMLPath, language, cb)
 {
 	var cards = [];
@@ -255,7 +160,7 @@ function processEntity(Entity, language)
 	Entity.childNodes().forEach(function(childNode)
 	{
 		var childNodeName = childNode.name();
-		if(IGNORED_TAG_NAMES.contains(childNodeName))
+		if(C.IGNORED_TAG_NAMES.contains(childNodeName))
 			return;
 
 		if(childNodeName!=="Tag" && childNodeName!=="ReferencedTag")
@@ -266,7 +171,7 @@ function processEntity(Entity, language)
 		}
 
 		var enumID = +childNode.attr("enumID").value();
-		if(!ENUMID_TO_NAME.hasOwnProperty(enumID))
+		if(!C.ENUMID_TO_NAME.hasOwnProperty(enumID))
 		{
 			base.info("New enumID [%d] with value [%s] in parent:\n%s", enumID, childNode.toString(), childNode.parent().toString());
 			process.exit(1);
@@ -275,30 +180,30 @@ function processEntity(Entity, language)
 	});
 
 	card.id = Entity.attr("CardID").value();
-	card.name = getTagValue(Entity, "CardName");
-	card.set = getTagValue(Entity, "CardSet");
-	card.type = getTagValue(Entity, "CardType");
-	card.faction = getTagValue(Entity, "Faction");
-	card.rarity = getTagValue(Entity, "Rarity");
-	card.cost = getTagValue(Entity, "Cost");
-	card.attack = getTagValue(Entity, "Atk");
-	card.health = getTagValue(Entity, "Health");
-	card.durability = getTagValue(Entity, "Durability");
-	card.text = getTagValue(Entity, "CardTextInHand");
-	card.inPlayText = getTagValue(Entity, "CardTextInPlay");
-	card.flavor = getTagValue(Entity, "FlavorText");
-	card.artist = getTagValue(Entity, "ArtistName");
-	card.collectible = getTagValue(Entity, "Collectible");
-	card.elite = getTagValue(Entity, "Elite");
-	card.race = getTagValue(Entity, "Race");
-	card.playerClass = getTagValue(Entity, "Class");
-	card.howToGet = getTagValue(Entity, "HowToGetThisCard");
-	card.howToGetGold = getTagValue(Entity, "HowToGetThisGoldCard");
+	card.name = getTagValue(Entity, language, "CardName");
+	card.set = getTagValue(Entity, language, "CardSet");
+	card.type = getTagValue(Entity, language, "CardType");
+	card.faction = getTagValue(Entity, language, "Faction");
+	card.rarity = getTagValue(Entity, language, "Rarity");
+	card.cost = getTagValue(Entity, language, "Cost");
+	card.attack = getTagValue(Entity, language, "Atk");
+	card.health = getTagValue(Entity, language, "Health");
+	card.durability = getTagValue(Entity, language, "Durability");
+	card.text = getTagValue(Entity, language, "CardTextInHand");
+	card.inPlayText = getTagValue(Entity, language, "CardTextInPlay");
+	card.flavor = getTagValue(Entity, language, "FlavorText");
+	card.artist = getTagValue(Entity, language, "ArtistName");
+	card.collectible = getTagValue(Entity, language, "Collectible");
+	card.elite = getTagValue(Entity, language, "Elite");
+	card.race = getTagValue(Entity, language, "Race");
+	card.playerClass = getTagValue(Entity, language, "Class");
+	card.howToGet = getTagValue(Entity, language, "HowToGetThisCard");
+	card.howToGetGold = getTagValue(Entity, language, "HowToGetThisGoldCard");
 	card.mechanics = [];
 
-	MECHANIC_TAGS.forEach(function(MECHANIC_TAG)
+	C.MECHANIC_TAGS.forEach(function(MECHANIC_TAG)
 	{
-		if(getTagValue(Entity, MECHANIC_TAG))
+		if(getTagValue(Entity, language, MECHANIC_TAG))
 			card.mechanics.push(MECHANIC_TAG);
 	});
 
@@ -316,21 +221,30 @@ function processEntity(Entity, language)
 	return card;
 }
 
-function getTagValue(Entity, tagName)
+function getTagValue(Entity, language, tagName)
 {
-	var value = getTagValue_Actual(Entity, tagName);
-	if(value && typeof value==="string")
+	try
 	{
-		value = value.replaceAll(" ", " ");
-		//value = value.replace(/[#$]([0-9]+)/g, "$1");		// The $ comes before a numerical damage value, the # before a numerical heal value
-	}
+		var value = getTagValue_Actual(Entity, language, tagName);
+		if(value && typeof value==="string")
+		{
+			value = value.replaceAll(" ", " ");
+			//value = value.replace(/[#$]([0-9]+)/g, "$1");		// The $ comes before a numerical damage value, the # before a numerical heal value
+		}
 
-	return value;
+		return value;
+	}
+	catch(err)
+	{
+		base.info(Entity.toString());
+		base.info(tagName);
+		throw err;
+	}
 }
 
-function getTagValue_Actual(Entity, tagName)
+function getTagValue_Actual(Entity, language, tagName)
 {
-	var Tag = Entity.get("Tag[@enumID='" + NAME_TO_ENUMID[tagName] + "']");
+	var Tag = Entity.get("Tag[@enumID='" + C.NAME_TO_ENUMID[tagName] + "']");
 	if(!Tag)
 		return undefined;
 
@@ -338,19 +252,22 @@ function getTagValue_Actual(Entity, tagName)
 	if(type==="String")
 		return Tag.text().trim();
 
+	if(type==="LocString")
+		return (Tag.get(language) || Tag.get("enUS")).text().trim();
+
 	var value = Tag.attr("value").value();
 
-	if(!TAG_VALUE_MAPS.hasOwnProperty(tagName))
+	if(!C.TAG_VALUE_MAPS.hasOwnProperty(tagName))
 	{
 		if(type==="")
 		{
-			if(BOOLEAN_TYPES.contains(tagName))
+			if(C.BOOLEAN_TYPES.contains(tagName))
 				type = "Bool";
 			else
 				type = "Number";
 		}
 
-		if(type==="Number")
+		if(type==="Number" || type==="Int")
 			return +value;
 
 		if(type==="Bool")
@@ -359,105 +276,122 @@ function getTagValue_Actual(Entity, tagName)
 		throw new Error("Unhandled Tag type [" + type + "] for tag: " + Tag.toString());
 	}
 
-	var tagMap = TAG_VALUE_MAPS[tagName];
+	var tagMap = C.TAG_VALUE_MAPS[tagName];
 	if(!tagMap.hasOwnProperty(value))
 		throw new Error("Unknown " + tagName + ": " + value + "\nWith XML: " + Tag.parent().toString());
 
 	return tagMap[value];
 }
 
-var TAG_VALUE_MAPS =
+function saveCardBacks(cardBacks, language, cb)
 {
-	"CardSet" :
+	base.info("Saving %d cardBacks for language: %s", cardBacks.length, language);
+
+	tiptoe(
+		function saveFiles()
+		{
+			fs.writeFile(path.join(CARDBACK_OUT_PATH, "CardBacks." + language + ".json"), JSON.stringify(cardBacks), {encoding:"utf8"}, this);
+		},
+		cb
+	);
+}
+
+function processCardBacks(language, cb)
+{
+	var cardBacks = [];
+		
+	base.info("Processing cardBacks for language: %s", language);
+
+	tiptoe(
+		function loadFile()
+		{
+			fs.readFile(CARDBACK_PATH, {encoding:"utf8"}, this);
+		},
+		function processFile(cardXMLData)
+		{
+			var xmlDoc = libxmljs.parseXml(cardXMLData);
+			var backDefs = xmlDoc.get("/Dbf");
+
+			backDefs.childNodes().forEach(function(childNode)
+			{
+				if(childNode.name()!=="Record")
+					return;
+
+				cardBacks.push(processCardBackRecord(childNode, language));
+			});
+
+			this();
+		},
+		function finish(err)
+		{
+			if(err)
+				base.error(err);
+
+			setImmediate(function() { cb(err, cardBacks); });
+		}
+	);
+}
+
+function setFieldValue(cardBack, language, field, targetType, options)
+{
+	options = options || {};
+
+	var fieldType = field.attr("column").value().toLowerCase();
+	if(fieldType!==targetType.toLowerCase())
+		return;
+
+	var value = null;
+	field.childNodes().forEach(function(languageNode)
 	{
-		 0 : undefined,
-		 1 : "Test Temporary",
-		 2 : "Basic",
-		 3 : "Classic",
-		 4 : "Reward",
-		 5 : "Missions",
-		 6 : "Demo",
-		 7 : "System",
-		 8 : "Debug",
-		11 : "Promotion",
-		12 : "Curse of Naxxramas",
-		13 : "Goblins vs Gnomes",
-		14 : "Blackrock Mountain",
-		15 : "The Grand Tournament",
-		16 : "Credits",
-		17 : "Hero Skins",
-		18 : "Tavern Brawl"
-	},
-	"CardType" :
+		if(value || !languageNode || languageNode.name()!==language)
+			return;
+
+		value = languageNode.text();
+	});
+
+	if(!value)
+		value = field.text();
+
+	if(value)
 	{
-		 0 : undefined,
-		 1 : "Game",
-		 2 : "Player",
-		 3 : "Hero",
-		 4 : "Minion",
-		 5 : "Spell",
-		 6 : "Enchantment",
-		 7 : "Weapon",
-		 8 : "Item",
-		 9 : "Totem",
-		10 : "Hero Power"
-	},
-	"Faction" :
-	{
-		0 : undefined,
-		1 : "Horde",
-		2 : "Alliance",
-		3 : "Neutral"
-	},
-	"Rarity" :
-	{
-		0 : undefined,
-		1 : "Common",
-		2 : "Free",
-		3 : "Rare",
-		4 : "Epic",
-		5 : "Legendary"
-	},
-	"Race" :
-	{
-		 1 : "Blood Elf",
-		 2 : "Draenei",
-		 3 : "Dwarf",
-		 4 : "Gnome",
-		 5 : "Goblin",
-		 6 : "Human",
-		 7 : "Night Elf",
-		 8 : "Orc",
-		 9 : "Tauren",
-		10 : "Troll",
-		11 : "Undead",
-		12 : "Worgen",
-		13 : "Goblin2",
-		14 : "Murloc",
-		15 : "Demon",
-		16 : "Scourge",
-		17 : "Mech",
-		18 : "Elemental",
-		19 : "Ogre",
-		20 : "Beast",
-		21 : "Totem",
-		22 : "Nerubian",
-		23 : "Pirate",
-		24 : "Dragon",
-	},
-	"Class" :
-	{
-		 0 : undefined,
-		 1 : "Death Knight",
-		 2 : "Druid",
-		 3 : "Hunter",
-		 4 : "Mage",
-		 5 : "Paladin",
-		 6 : "Priest",
-		 7 : "Rogue",
-		 8 : "Shaman",
-		 9 : "Warlock",
-		10 : "Warrior",
-		11 : "Dream"
+		if(options)
+		{
+			if(options.capitalize)
+				value = value.toProperCase();
+
+			if(options.boolean)
+				value = (value.toLowerCase()==="true");
+
+			if(options.integer)
+				value = +value;
+		}
+
+		cardBack[(options && options.fieldName) ? options.fieldName : targetType] = value;
 	}
-};
+}
+
+function processCardBackRecord(Entity, language)
+{
+	var cardBack = {};
+	Entity.childNodes().forEach(function(childNode)
+	{
+		var childNodeName = childNode.name();
+		if(childNodeName!=="Field")
+			return;
+
+		setFieldValue(cardBack, language, childNode, "id", {integer:true});
+		setFieldValue(cardBack, language, childNode, "name");
+		setFieldValue(cardBack, language, childNode, "enabled", {boolean:true});
+		setFieldValue(cardBack, language, childNode, "source", {capitalize:true, fieldName : "sourceType"});
+		setFieldValue(cardBack, language, childNode, "source_description", {capitalize:true, fieldName : "source"});
+		setFieldValue(cardBack, language, childNode, "description");
+	});
+
+	if(cardBack.hasOwnProperty("description") && cardBack.description.contains("\\n\\n"))
+	{
+		cardBack.howToGet = cardBack.description.substring(cardBack.description.indexOf("\\n\\n")+4);
+		cardBack.description = cardBack.description.substring(0, cardBack.description.indexOf("\\n\\n"));
+	}
+
+	return cardBack;
+}

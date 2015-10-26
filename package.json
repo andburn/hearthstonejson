@@ -1,8 +1,8 @@
 {
 	"name"					: "hearthstonejson",
 	"version"				: "1.0.0",
-	"author"				: "Robert Schultz <robert@cosmicrealms.com>",
-	"description"			: "Code to extract card data from Hearthstone MPQs into JSON files",
+	"author"				: "HearthSim on Github",
+	"description"			: "Code to generate hearthstonejson.com",
 	"private"				: true,
 	"dependencies"			:
 	{
@@ -13,6 +13,7 @@
 		"glob"				: "~5.0.14",
 		"rimraf"			: "~2.4.3",
 		"moment"			: "~2.10.3",
-		"cli-color"			: "~1.0.0"
+		"cli-color"			: "~1.0.0",
+		"stylus"            : "~0.52.4"
 	}
 }

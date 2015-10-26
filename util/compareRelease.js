@@ -2,7 +2,7 @@
 /*global setImmediate: true*/
 
 var base = require("xbase"),
-	request = require("request"),
+	httpUtil = require("xutil").http,
 	fs = require("fs"),
 	glob = require("glob"),
 	color = require("cli-color"),
@@ -45,18 +45,18 @@ function processFile(fileName, cb)
 	tiptoe(
 		function getJSON()
 		{
-			request("http://hearthstonejson.com/json/" + fileName + ".json", this.parallel());
+			httpUtil.get("http://hearthstonejson.com/json/" + fileName + ".json", this.parallel());
 			fs.readFile(path.join(__dirname, "..", "web", "json", fileName + ".json"), {encoding : "utf8"}, this.parallel());
 		},
 		function compare(oldJSONArgs, newJSON)
 		{
-			if(oldJSONArgs[0].statusCode===404)
+			if(oldJSONArgs[2]===404)
 			{
 				base.info("Skipping %s do to being missing on production.", fileName);
 				return this();
 			}
 
-			var result = compareSets(JSON.parse(oldJSONArgs[1]), JSON.parse(newJSON));
+			var result = compareSets(JSON.parse(oldJSONArgs[0]), JSON.parse(newJSON));
 			if(result)
 				console.log(result);
 

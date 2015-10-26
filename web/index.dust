@@ -25,7 +25,8 @@
 		<br>
 		For more details see: <a href="#exampleCard">Example Card</a> and <a href="#documentation">Documentation</a><br>
 		<br>
-		Any bugs or feedback, e-mail me at <a href="mailto:robert@cosmicrealms.com">robert@cosmicrealms.com</a><br>
+		Bugs or feedback? See git repo at <a href="https://github.com/HearthSim/hearthstonejson">github.com/HearthSim/hearthstonejson</a><br>
+		<br>
 		</p>
 		<br>
 		<br>
@@ -390,10 +391,6 @@
 		<br>
 		This website is not affiliated with Blizzard Entertainment in any way.<br>
 		</p>
-		<hr>
-		<h1>Source Code<a href="#top">(back to top)</a></h1>
-		<p>Source code used to generate the JSON is available here: <a href="https://github.com/HearthSim/hearthstonejson">https://github.com/HearthSim/hearthstonejson</a><br>
-		<br>
 		</p>
 	</body>
 </html>
