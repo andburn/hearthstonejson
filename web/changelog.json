@@ -1,5 +1,14 @@
 [
 	{
+		"version" : "6.1.0",
+		"when" : "2015-11-10",
+		"patchVersion" : "4.0.0.10833",
+		"changes" : [
+			"Added League of Explorers patch",
+			"New 'Discover' keyword"
+		]
+	},
+	{
 		"version" : "6.0.2",
 		"when" : "2015-10-25",
 		"patchVersion" : "3.2.0.10604",

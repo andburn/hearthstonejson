@@ -97,7 +97,8 @@
 			15 : "The Grand Tournament",
 			16 : "Credits",
 			17 : "Hero Skins",
-			18 : "Tavern Brawl"
+			18 : "Tavern Brawl",
+			20 : "League of Explorers"
 		},
 		"CardType" :
 		{
@@ -235,7 +236,8 @@
 		401 : "EvilGlow",
 		402 : "HideCost",
 		403 : "Inspire",
-		404 : "ReceivesDoubleSpellDamageBonus"
+		404 : "ReceivesDoubleSpellDamageBonus",
+		415 : "Discover"
 	};
 
 	exports.NAME_TO_ENUMID = Object.swapKeyValues(exports.ENUMID_TO_NAME);
