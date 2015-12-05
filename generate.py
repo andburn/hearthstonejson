@@ -35,10 +35,14 @@ MECHANICS_TAGS = [
 ]
 
 
-def pretty_json_dump(obj, filename):
+def json_dump(obj, filename, pretty=False):
 	print("Writing to %r" % (filename))
+	if pretty:
+		kwargs = {"sort_keys": True, "indent": "\t", "separators": (",", ": ")}
+	else:
+		kwargs = {"separator": (",", ":")}
 	with open(filename, "w") as f:
-		json.dump(obj, f, sort_keys=True, indent=4, separators=(",", ": "), ensure_ascii=False)
+		json.dump(obj, f, ensure_ascii=False, **kwargs)
 
 
 def show_field(card, k, v):
@@ -104,7 +108,7 @@ def export_cards_to_file(cards, filename):
 	for card in cards:
 		ret.append(serialize_card(card))
 
-	pretty_json_dump(ret, filename)
+	json_dump(ret, filename)
 
 
 def write_cardbacks(dbf, filename, locale):
@@ -122,7 +126,7 @@ def write_cardbacks(dbf, filename, locale):
 			"source_description": record["SOURCE_DESCRIPTION"],
 		})
 
-	pretty_json_dump(ret, filename)
+	json_dump(ret, filename)
 
 
 def main():
