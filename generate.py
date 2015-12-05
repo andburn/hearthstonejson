@@ -3,6 +3,7 @@
 import os
 import json
 from enum import IntEnum
+from hearthstone.dbf import Dbf
 from hearthstone.cardxml import load
 from hearthstone.enums import CardType, Faction, GameTag, Locale
 
@@ -32,6 +33,12 @@ MECHANICS_TAGS = [
 	GameTag.ImmuneToSpellpower,
 	GameTag.InvisibleDeathrattle,
 ]
+
+
+def pretty_json_dump(obj, filename):
+	print("Writing to %r" % (filename))
+	with open(filename, "w") as f:
+		json.dump(obj, f, sort_keys=True, indent=4, separators=(",", ": "), ensure_ascii=False)
 
 
 def show_field(card, k, v):
@@ -92,14 +99,30 @@ def serialize_card(card):
 	return ret
 
 
-def export_to_file(cards, filename):
-	print("Writing to %r" % (filename))
+def export_cards_to_file(cards, filename):
 	ret = []
 	for card in cards:
 		ret.append(serialize_card(card))
 
-	with open(filename, "w") as f:
-		json.dump(ret, f, sort_keys=True, indent=4, separators=(",", ": "), ensure_ascii=False)
+	pretty_json_dump(ret, filename)
+
+
+def write_cardbacks(dbf, filename, locale):
+	ret = []
+
+	for record in dbf.records:
+		ret.append({
+			"id": record["ID"],
+			"note_desc": record["NOTE_DESC"],
+			"source": record["SOURCE"],
+			"enabled": record["ENABLED"],
+			"name": record["NAME"][locale.name],
+			"prefab_name": record["PREFAB_NAME"],
+			"description": record["DESCRIPTION"][locale.name],
+			"source_description": record["SOURCE_DESCRIPTION"],
+		})
+
+	pretty_json_dump(ret, filename)
 
 
 def main():
@@ -110,15 +133,18 @@ def main():
 		db, xml = load("hs-data/CardDefs.xml", locale=locale.name)
 
 		basedir = os.path.join("out", "latest", locale.name)
-
 		if not os.path.exists(basedir):
 			os.makedirs(basedir)
 
-		filename = os.path.join(basedir, "collectible.json")
-		export_to_file([card for card in db.values() if card.collectible], filename)
+		filename = os.path.join(basedir, "cards.json")
+		export_cards_to_file(db.values(), filename)
 
-		filename = os.path.join(basedir, "all.json")
-		export_to_file(db.values(), filename)
+		filename = os.path.join(basedir, "cards.collectible.json")
+		export_cards_to_file([card for card in db.values() if card.collectible], filename)
+
+		filename = os.path.join(basedir, "cardbacks.json")
+		dbf = Dbf.load("hs-data/DBF/CARD_BACK.xml")
+		write_cardbacks(dbf, filename, locale)
 
 
 if __name__ == "__main__":
