@@ -28,6 +28,7 @@ MECHANICS_TAGS = [
 	GameTag.STEALTH,
 	GameTag.SPELLPOWER,
 	GameTag.TAG_ONE_TURN_EFFECT,
+	GameTag.TAUNT,
 	GameTag.TREASURE,
 	GameTag.WINDFURY,
 	GameTag.ImmuneToSpellpower,
