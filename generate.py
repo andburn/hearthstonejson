@@ -93,8 +93,8 @@ def serialize_card(card):
 	if card.requirements:
 		ret["playRequirements"] = {k.name: v for k, v in card.requirements.items()}
 
-	if card.choose_cards:
-		ret["chooseCards"] = card.choose_cards
+	# if card.choose_cards:
+		# ret["chooseCards"] = card.choose_cards
 
 	return ret
 
