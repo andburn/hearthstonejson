@@ -128,7 +128,8 @@
 			2 : "Free",
 			3 : "Rare",
 			4 : "Epic",
-			5 : "Legendary"
+			5 : "Legendary",
+			6 : "Unknown_6"
 		},
 		"Race" :
 		{
