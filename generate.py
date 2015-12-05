@@ -50,6 +50,12 @@ def show_field(card, k, v):
 		return True
 	if k == "faction" and v == Faction.NEUTRAL:
 		return False
+	if k == "attack" and card.type in (CardType.MINION, CardType.WEAPON):
+		return True
+	if k == "health" and card.type in (CardType.MINION, CardType.HERO):
+		return True
+	if k == "durability" and card.type == CardType.WEAPON:
+		return True
 	return bool(v)
 
 
