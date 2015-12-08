@@ -229,6 +229,7 @@
 		205 : "Summoned",
 		367 : "AIMustPlay",
 		335 : "InvisibleDeathrattle",
+		344 : "LocalizationNotes",
 		377 : "UKNOWN_HasOnDrawEffect",
 		388 : "SparePart",
 		389 : "Forgetful",
