@@ -130,7 +130,7 @@ def write_cardbacks(dbf, filename, locale):
 			"name": record["NAME"][locale.name],
 			"prefab_name": record["PREFAB_NAME"],
 			"description": record["DESCRIPTION"][locale.name],
-			"source_description": record["SOURCE_DESCRIPTION"][locale.name],
+			"source_description": record["SOURCE_DESCRIPTION"].get(locale.name, ""),
 		})
 
 	json_dump(ret, filename)
