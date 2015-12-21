@@ -42,7 +42,7 @@ def json_dump(obj, filename, pretty=False):
 		kwargs = {"sort_keys": True, "indent": "\t", "separators": (",", ": ")}
 	else:
 		kwargs = {"separators": (",", ":")}
-	with open(filename, "w") as f:
+	with open(filename, "w", encoding="utf8") as f:
 		json.dump(obj, f, ensure_ascii=False, **kwargs)
 
 
