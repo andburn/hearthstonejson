@@ -47,7 +47,7 @@ def json_dump(obj, filename, pretty=False):
 
 
 def show_field(card, k, v):
-	if k == "cost" and card.type != CardType.ENCHANTMENT:
+	if k == "cost" and card.type not in (CardType.ENCHANTMENT, CardType.HERO):
 		return True
 	if k == "faction" and v == Faction.NEUTRAL:
 		return False
