@@ -1,5 +1,14 @@
 [
 	{
+		"version" : "6.2.0",
+		"when" : "2015-12-22",
+		"patchVersion" : "4.1.0.10956",
+		"changes" : [
+			"Updated to latest patch",
+			"Add note on deprecation of the current API, move to api.hearthstonejson.com"
+		]
+	},
+	{
 		"version" : "6.1.0",
 		"when" : "2015-11-10",
 		"patchVersion" : "4.0.0.10833",
