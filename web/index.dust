@@ -10,6 +10,16 @@
 	</head>
 	<body><a name="top"></a>
 		<script type="text/javascript" src="rainbow-custom.min.js"></script>
+
+		<div id="api-note">
+			<strong>New Hearthstone JSON API</strong>
+			<p>A new version of the Hearthstone JSON API is now available at <a href="https://api.hearthstonejson.com/">api.hearthstonejson.com</a> for beta testing.
+			The new API is backwards-incompatible.</p>
+			<p>The current Hearthstone JSON files will remain available but will no longer be updated. If you need help moving to the new API, do not hesitate to
+			file an issue on the <a href="https://github.com/hearthsim/hearthstonejson">GitHub tracker</a>!
+			</p>
+		</div>
+
 		<center><h1 style="font-size: 240%;">Hearthstone JSON</h1></center>
 		<p style="margin-top: 1.0em;">This project provides up to date <a href="http://us.battle.net/hearthstone/en/">Hearthstone</a> card data in <a href="http://www.json.org/">JSON</a> format for developers to easily use in their projects.<br/>
 		<br/>

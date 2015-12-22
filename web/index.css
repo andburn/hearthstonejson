@@ -263,3 +263,10 @@ table.symbols td {
 #cardBackDocumentationTable td:last-child {
   white-space: no-wrap;
 }
+
+#api-note {
+	margin: 2em 8em;
+	padding: 1em;
+	background: rgb(0, 0, 0) none repeat scroll 0% 0%;
+	border: 3px solid rgb(117, 24, 24);
+}
