@@ -1,28 +1,20 @@
-Intro
------
+# Hearthstone JSON
 
-This project extracts card data from Hearthstone into JSON files.
-
-This is then used to generate the website: [http://hearthstonejson.com](http://hearthstonejson.com)
-
-It is meant to run in Linux. To run you need:
-* nodejs
-* git
-
-Build
------
-
-    git clone https://github.com/Sembiance/hearthstonejson.git
-    cd hearthstonejson
-    ./build.sh
-
-Run
----
-    node generate.js
-    node generateCardBacks.js
+This project extracts card data from Hearthstone into JSON files to be
+used to generate [HearthstoneJSON.com](https://hearthstonejson.com)
 
 
-Results
--------
+## Requirements
 
-In the 'out' directory will be a JSON file per set.
+* Python >= 3.4
+* [python-hearthstone](https://github.com/HearthSim/python-hearthstone.git)
+
+
+## Generate
+
+To generate the files, just run:
+
+* `./bootstrap.sh`
+* `./generate.py`
+
+Files will be generated in the `out` directory.
