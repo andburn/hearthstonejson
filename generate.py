@@ -1,7 +1,8 @@
 #!/usr/bin/env python
-
 import os
 import json
+import sys
+from argparse import ArgumentParser
 from enum import IntEnum
 from hearthstone.dbf import Dbf
 from hearthstone.cardxml import load
@@ -139,13 +140,30 @@ def write_cardbacks(dbf, filename, locale):
 
 
 def main():
+	parser = ArgumentParser()
+	parser.add_argument(
+		"-o", "--output-dir",
+		type=str,
+		dest="output_dir",
+		default="out",
+		help="Output directory"
+	)
+	parser.add_argument(
+		"-i", "--input-dir",
+		type=str,
+		dest="input_dir",
+		default="hs-data",
+		help="Input hs-data directory"
+	)
+	args = parser.parse_args(sys.argv[1:])
+
 	for locale in Locale:
 		if locale.unused:
 			continue
 
-		db, xml = load("hs-data/CardDefs.xml", locale=locale.name)
+		db, xml = load(os.path.join(args.input_dir, "CardDefs.xml"), locale=locale.name)
 
-		basedir = os.path.join("out", "latest", locale.name)
+		basedir = os.path.join(args.output_dir, locale.name)
 		if not os.path.exists(basedir):
 			os.makedirs(basedir)
 
@@ -156,7 +174,7 @@ def main():
 		export_cards_to_file([card for card in db.values() if card.collectible], filename)
 
 		filename = os.path.join(basedir, "cardbacks.json")
-		dbf = Dbf.load("hs-data/DBF/CARD_BACK.xml")
+		dbf = Dbf.load(os.path.join(args.input_dir, "DBF", "CARD_BACK.xml"))
 		write_cardbacks(dbf, filename, locale)
 
 
