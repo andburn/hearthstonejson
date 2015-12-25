@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 BASEDIR="$(readlink -f $(dirname $0))"
 HSDATADIR="$BASEDIR/hs-data"

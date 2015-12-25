@@ -130,10 +130,10 @@ def write_cardbacks(dbf, filename, locale):
 			"note_desc": record["NOTE_DESC"],
 			"source": record["SOURCE"],
 			"enabled": record["ENABLED"],
-			"name": record["NAME"][locale.name],
-			"prefab_name": record["PREFAB_NAME"],
-			"description": record["DESCRIPTION"][locale.name],
-			"source_description": record["SOURCE_DESCRIPTION"].get(locale.name, ""),
+			"name": record.get("NAME", {}).get(locale.name, ""),
+			"prefab_name": record.get("PREFAB_NAME", ""),
+			"description": record.get("DESCRIPTION", {}).get(locale.name, ""),
+			"source_description": record.get("SOURCE_DESCRIPTION", {}).get(locale.name, ""),
 		})
 
 	json_dump(ret, filename)
@@ -173,8 +173,12 @@ def main():
 		filename = os.path.join(basedir, "cards.collectible.json")
 		export_cards_to_file([card for card in db.values() if card.collectible], filename)
 
+		path = os.path.join(args.input_dir, "DBF", "CARD_BACK.xml")
+		if not os.path.exists(path):
+			print("Skipping card back generation (CARD_BACK.xml does not exist)")
+			continue
 		filename = os.path.join(basedir, "cardbacks.json")
-		dbf = Dbf.load(os.path.join(args.input_dir, "DBF", "CARD_BACK.xml"))
+		dbf = Dbf.load(path)
 		write_cardbacks(dbf, filename, locale)
 
 
