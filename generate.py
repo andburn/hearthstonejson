@@ -157,11 +157,20 @@ def main():
 	)
 	args = parser.parse_args(sys.argv[1:])
 
+	db, xml = load(os.path.join(args.input_dir, "CardDefs.xml"))
+	dbf_path = os.path.join(args.input_dir, "DBF", "CARD_BACK.xml")
+	if not os.path.exists(dbf_path):
+		print("Skipping card back generation (%s does not exist)" % (dbf_path))
+		dbf = None
+	else:
+		dbf = Dbf.load(dbf_path)
+
 	for locale in Locale:
 		if locale.unused:
 			continue
 
-		db, xml = load(os.path.join(args.input_dir, "CardDefs.xml"), locale=locale.name)
+		for card in db.values():
+			card.locale = locale.name
 
 		basedir = os.path.join(args.output_dir, locale.name)
 		if not os.path.exists(basedir):
@@ -173,13 +182,9 @@ def main():
 		filename = os.path.join(basedir, "cards.collectible.json")
 		export_cards_to_file([card for card in db.values() if card.collectible], filename)
 
-		path = os.path.join(args.input_dir, "DBF", "CARD_BACK.xml")
-		if not os.path.exists(path):
-			print("Skipping card back generation (CARD_BACK.xml does not exist)")
-			continue
-		filename = os.path.join(basedir, "cardbacks.json")
-		dbf = Dbf.load(path)
-		write_cardbacks(dbf, filename, locale)
+		if dbf is not None:
+			filename = os.path.join(basedir, "cardbacks.json")
+			write_cardbacks(dbf, filename, locale)
 
 
 if __name__ == "__main__":
