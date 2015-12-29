@@ -6,7 +6,7 @@ from argparse import ArgumentParser
 from enum import IntEnum
 from hearthstone.dbf import Dbf
 from hearthstone.cardxml import load
-from hearthstone.enums import CardType, Faction, GameTag, Locale
+from hearthstone.enums import CardType, Faction, GameTag, Locale, LOCALIZED_TAGS
 
 
 MECHANICS_TAGS = [
@@ -70,6 +70,17 @@ def get_mechanics(card):
 	return ret
 
 
+TAG_NAMES = {
+	GameTag.CARDNAME: "name",
+	GameTag.FLAVORTEXT: "flavortext",
+	GameTag.CARDTEXT_INHAND: "text",
+	GameTag.CardTextInPlay: "textInPlay",
+	GameTag.HOW_TO_EARN: "howToEarn",
+	GameTag.HOW_TO_EARN_GOLDEN: "howToEarnGolden",
+	GameTag.TARGETING_ARROW_TEXT: "targetingArrowText",
+}
+
+
 def serialize_card(card):
 	ret = {
 		"id": card.id,
@@ -115,10 +126,25 @@ def serialize_card(card):
 	return ret
 
 
-def export_cards_to_file(cards, filename):
+def export_cards_to_file(cards, filename, locale):
 	ret = []
 	for card in cards:
+		card.locale = locale
 		ret.append(serialize_card(card))
+
+	json_dump(ret, filename)
+
+
+def export_all_locales_cards_to_file(cards, filename):
+	ret = []
+	for card in cards:
+		obj = serialize_card(card)
+		for tag in LOCALIZED_TAGS:
+			if tag in TAG_NAMES:
+				value = card._localized_tags[tag]
+				if value:
+					obj[TAG_NAMES[tag]] = value
+		ret.append(obj)
 
 	json_dump(ret, filename)
 
@@ -167,26 +193,35 @@ def main():
 	else:
 		dbf = Dbf.load(dbf_path)
 
+	cards = db.values()
+	collectible_cards = [card for card in cards if card.collectible]
+
 	for locale in Locale:
 		if locale.unused:
 			continue
-
-		for card in db.values():
-			card.locale = locale.name
 
 		basedir = os.path.join(args.output_dir, locale.name)
 		if not os.path.exists(basedir):
 			os.makedirs(basedir)
 
 		filename = os.path.join(basedir, "cards.json")
-		export_cards_to_file(db.values(), filename)
+		export_cards_to_file(cards, filename, locale.name)
 
 		filename = os.path.join(basedir, "cards.collectible.json")
-		export_cards_to_file([card for card in db.values() if card.collectible], filename)
+		export_cards_to_file(collectible_cards, filename, locale.name)
 
 		if dbf is not None:
 			filename = os.path.join(basedir, "cardbacks.json")
 			write_cardbacks(dbf, filename, locale)
+
+	# Generate merged locales
+	basedir = os.path.join(args.output_dir, "all")
+	if not os.path.exists(basedir):
+		os.makedirs(basedir)
+	filename = os.path.join(basedir, "cards.json")
+	export_all_locales_cards_to_file(cards, filename)
+	filename = os.path.join(basedir, "cards.collectible.json")
+	export_all_locales_cards_to_file(collectible_cards, filename)
 
 
 if __name__ == "__main__":
