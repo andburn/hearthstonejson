@@ -79,6 +79,7 @@ def serialize_card(card):
 		"textInPlay": card.playtext,
 		"howToEarn": card.how_to_earn,
 		"howToEarnGolden": card.how_to_earn_golden,
+		"targetingArrowText": card.targeting_arrow_text,
 		"artist": card.artist,
 		"faction": card.faction,
 		"playerClass": card.card_class,
