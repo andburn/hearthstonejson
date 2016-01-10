@@ -120,6 +120,9 @@ def serialize_card(card):
 	if card.requirements:
 		ret["playRequirements"] = {k.name: v for k, v in card.requirements.items()}
 
+	if card.craftable:
+		ret["dust"] = card.crafting_costs + card.disenchant_costs
+
 	# if card.choose_cards:
 		# ret["chooseCards"] = card.choose_cards
 
