@@ -3,14 +3,17 @@ set -e
 
 BASEDIR="$(readlink -f $(dirname $0))"
 HSDATADIR="$BASEDIR/hs-data"
+OUTDIR="$BASEDIR/out"
 
-for tag in $(git -C "$HSDATADIR" tag); do
+builds=($(printf "%s\n" $(git -C "$HSDATADIR" tag) | sort -n))
+maxbuild="${builds[-1]}"
+
+mkdir -p "$OUTDIR"
+
+for tag in ${builds[@]}; do
 	git -C "$HSDATADIR" reset --hard "$tag"
-	python "$BASEDIR/generate.py" --input-dir="$HSDATADIR" --output-dir="$BASEDIR/out/$tag"
+	python "$BASEDIR/generate.py" --input-dir="$HSDATADIR" --output-dir="$OUTDIR/$tag"
 done
 
 # Symlink latest build
-builds=($(basename -a "$BASEDIR/out/"*))
-IFS=$'\n'
-maxbuild=$(echo "${builds[*]}" | sort -nr | head -n1)
-ln -s "$maxbuild" "$BASEDIR/out/latest"
+ln -s "$maxbuild" "$OUTDIR/latest"
