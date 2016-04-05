@@ -126,9 +126,6 @@ def serialize_card(card):
 	if card.texture:
 		ret["texture"] = card.texture
 
-	# if card.choose_cards:
-		# ret["chooseCards"] = card.choose_cards
-
 	return ret
 
 
