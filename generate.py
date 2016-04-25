@@ -71,7 +71,7 @@ def get_mechanics(card):
 
 TAG_NAMES = {
 	GameTag.CARDNAME: "name",
-	GameTag.FLAVORTEXT: "flavortext",
+	GameTag.FLAVORTEXT: "flavor",
 	GameTag.CARDTEXT_INHAND: "text",
 	GameTag.CardTextInPlay: "textInPlay",
 	GameTag.HOW_TO_EARN: "howToEarn",
