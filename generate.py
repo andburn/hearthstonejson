@@ -22,7 +22,6 @@ MECHANICS_TAGS = [
 	GameTag.FREEZE,
 	GameTag.INSPIRE,
 	GameTag.MORPH,
-	GameTag.OVERLOAD,
 	GameTag.POISONOUS,
 	GameTag.SECRET,
 	GameTag.SILENCE,
@@ -103,6 +102,7 @@ def serialize_card(card):
 		"cost": card.cost,
 		"durability": card.durability,
 		"health": card.health,
+		"overload": card.overload,
 	}
 	ret = {k: v for k, v in ret.items() if show_field(card, k, v)}
 
