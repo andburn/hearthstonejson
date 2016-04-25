@@ -16,8 +16,10 @@ for tag in ${builds[@]}; do
 	python "$BASEDIR/generate.py" --input-dir="$HSDATADIR" --output-dir="$OUTDIR/$tag"
 done
 
-sudo rsync -rtv "$OUTDIR" "$LIVEDIR"
-sudo rm "$LIVEDIR/latest"
-# Symlink latest build
-sudo ln -s "$maxbuild" "$LIVEDIR/latest"
-sudo chown -R www-data:www-data "$LIVEDIR"
+if [[ "$HOST" == "hearthsim.net" ]]; then
+	sudo rsync -rtv "$OUTDIR" "$LIVEDIR"
+	sudo rm "$LIVEDIR/latest"
+	# Symlink latest build
+	sudo ln -s "$maxbuild" "$LIVEDIR/latest"
+	sudo chown -R www-data:www-data "$LIVEDIR"
+fi
