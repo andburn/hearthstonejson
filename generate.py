@@ -26,7 +26,6 @@ MECHANICS_TAGS = [
 	GameTag.SECRET,
 	GameTag.SILENCE,
 	GameTag.STEALTH,
-	GameTag.SPELLPOWER,
 	GameTag.TAG_ONE_TURN_EFFECT,
 	GameTag.TAUNT,
 	GameTag.TREASURE,
@@ -103,6 +102,7 @@ def serialize_card(card):
 		"durability": card.durability,
 		"health": card.health,
 		"overload": card.overload,
+		"spellDamage": card.spell_damage,
 	}
 	ret = {k: v for k, v in ret.items() if show_field(card, k, v)}
 
