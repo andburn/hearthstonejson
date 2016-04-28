@@ -16,10 +16,14 @@ for tag in ${builds[@]}; do
 	python "$BASEDIR/generate.py" --input-dir="$HSDATADIR" --output-dir="$OUTDIR/$tag"
 done
 
+# Update enums list
+python -m hearthstone.enums > "$OUTDIR/enums.json"
+
+# Symlink latest build
+ln -s "$maxbuild" "$OUTDIR/latest"
+
 if [[ "$HOST" == "hearthsim.net" ]]; then
-	sudo rsync -rtv "$OUTDIR" "$LIVEDIR"
-	sudo rm "$LIVEDIR/latest"
-	# Symlink latest build
-	sudo ln -s "$maxbuild" "$LIVEDIR/latest"
+	sudo rm -rf "$LIVEDIR"
+	sudo mv "$OUTDIR" "$LIVEDIR"
 	sudo chown -R www-data:www-data "$LIVEDIR"
 fi
