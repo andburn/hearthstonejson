@@ -18,3 +18,15 @@ To generate the files, just run:
 * `./generate.py`
 
 Files will be generated in the `out` directory.
+
+
+## License
+
+This project is licensed under the terms of the MIT license.
+The full license text is available in the `LICENSE` file.
+
+
+## Community
+
+This is a [HearthSim](https://hearthsim.info) project. All development
+happens on our IRC channel `#hearthsim` on [Freenode](https://freenode.net).
