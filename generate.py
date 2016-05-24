@@ -128,9 +128,6 @@ def serialize_card(card):
 	if card.craftable:
 		ret["dust"] = card.crafting_costs + card.disenchant_costs
 
-	if card.texture:
-		ret["texture"] = card.texture
-
 	return ret
 
 
