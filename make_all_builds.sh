@@ -23,7 +23,7 @@ python -m hearthstone.enums > "$OUTDIR/enums.json"
 ln -s "$maxbuild" "$OUTDIR/latest"
 
 if [[ "$HOST" == "hearthsim.net" ]]; then
-	sudo rm -rf "$LIVEDIR"
-	sudo mv "$OUTDIR" "$LIVEDIR"
-	sudo chown -R www-data:www-data "$LIVEDIR"
+	rm -rf "$LIVEDIR"
+	mv "$OUTDIR" "$LIVEDIR"
+	chown -R www-data:www-data "$LIVEDIR"
 fi
