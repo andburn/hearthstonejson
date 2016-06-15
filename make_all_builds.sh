@@ -2,7 +2,7 @@
 set -e
 
 BASEDIR="$(readlink -f $(dirname $0))"
-HSDATADIR="$BASEDIR/hs-data"
+HSDATADIR=${HSDATA:-"$BASEDIR/hs-data"}
 OUTDIR="$BASEDIR/v1"
 LIVEDIR="/srv/http/api.hearthstonejson.com/html/v1"
 
