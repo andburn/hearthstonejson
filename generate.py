@@ -37,6 +37,9 @@ MECHANICS_TAGS = [
 	GameTag.WINDFURY,
 	GameTag.ImmuneToSpellpower,
 	GameTag.InvisibleDeathrattle,
+	GameTag.CANT_ATTACK,
+	GameTag.CANT_BE_TARGETED_BY_ABILITIES,
+	GameTag.CANT_BE_TARGETED_BY_HERO_POWERS,
 ]
 
 
