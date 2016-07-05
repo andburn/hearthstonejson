@@ -161,15 +161,18 @@ def write_cardbacks(dbf, filename, locale):
 	ret = []
 
 	for record in dbf.records:
+		name = record.get("NAME") or {}
+		description = record.get("DESCRIPTION") or {}
+		source_description = record.get("SOURCE_DESCRIPTION") or {}
 		ret.append({
 			"id": record["ID"],
 			"note_desc": record["NOTE_DESC"],
 			"source": record["SOURCE"],
 			"enabled": record["ENABLED"],
-			"name": record.get("NAME", {}).get(locale.name, ""),
+			"name": name.get(locale.name, ""),
 			"prefab_name": record.get("PREFAB_NAME", ""),
-			"description": record.get("DESCRIPTION", {}).get(locale.name, ""),
-			"source_description": record.get("SOURCE_DESCRIPTION", {}).get(locale.name, ""),
+			"description": description.get(locale.name, ""),
+			"source_description": source_description.get(locale.name, ""),
 		})
 
 	json_dump(ret, filename)
