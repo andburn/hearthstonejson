@@ -2,8 +2,8 @@
 set -e
 
 BASEDIR="$(readlink -f $(dirname $0))"
-HSDATA_DIR="$BASEDIR/hs-data"
-HSDATA_URL="https://github.com/HearthSim/hs-data.git"
+HSDATA_DIR="$BASEDIR/hsdata"
+HSDATA_URL="https://gitlab.com/HearthSim/hsdata.git"
 
 echo "Fetching data files from $HSDATA_URL into $HSDATA_DIR"
 

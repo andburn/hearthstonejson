@@ -1,9 +1,2 @@
-node_modules
-hearthstonejson.sublime-project
-hearthstonejson.sublime-workspace
 out
-outCardBacks
-deploy
-nginx
-tmp
-hs-data
+hsdata

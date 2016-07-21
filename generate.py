@@ -191,8 +191,8 @@ def main():
 		"-i", "--input-dir",
 		type=str,
 		dest="input_dir",
-		default="hs-data",
-		help="Input hs-data directory"
+		default="hsdata",
+		help="Input hsdata directory"
 	)
 	args = parser.parse_args(sys.argv[1:])
 
