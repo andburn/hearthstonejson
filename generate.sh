@@ -9,6 +9,7 @@ HTMLDIR="$BUILDDIR/html"
 OUTDIR="$HTMLDIR/v1"
 PYTHON=${PYTHON:-python}
 GENERATE_BIN="$BASEDIR/generate.py"
+UPDATE_REDIRECTS_BIN="$BASEDIR/update_s3_redirect.py"
 ENUMS_JSON="$OUTDIR/enums.json"
 ENUMS_CS="$OUTDIR/enums.cs"
 ENUMS_TS="$OUTDIR/enums.d.ts"
@@ -44,9 +45,9 @@ function link_build() {
 	build="$1"
 	# ln -s --verbose --no-target-directory --force "$build" "$OUTDIR/latest"
 	touch latest
-	# aws s3 cp latest "$S3_BUCKET/v1/latest/index.html" --website-redirect "/v1/$build/"
 	aws s3 cp latest "$S3_BUCKET/v1/latest" --website-redirect "/v1/$build/"
 	rm latest
+	"$PYTHON" "$UPDATE_REDIRECTS_BIN" "$build"
 }
 
 function update_build() {
