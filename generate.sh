@@ -76,7 +76,7 @@ function upload_to_s3() {
 
 	aws s3 cp "$HTMLDIR/index.html" "$S3_BUCKET/index.html"
 
-	if [[ -z "$build" ]]; then
+	if [[ ! -z $build ]]; then
 		aws s3 cp "$OUTDIR/index.html" "$S3_BUCKET/v1/index.html"
 		aws s3 cp "$OUTDIR/$build" "$S3_BUCKET/v1/$build" --recursive
 	else
