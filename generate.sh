@@ -110,7 +110,7 @@ elif [[ $1 == "sync-textures" ]]; then
 		>&2 echo "Usage: $0 $1 <input dir>"
 		exit 2
 	fi
-	aws s3 sync "$2" "s3://$S3_ART_BUCKET_NAME/cards/by-id"
+	aws s3 sync "$2" "s3://$S3_ART_BUCKET_NAME/v1"
 elif [[ $1 == "all" ]]; then
 	echo "Updating all builds"
 	for build in ${builds[@]}; do

@@ -39,10 +39,10 @@ def update_art_404_redirects(s3, bucket="art.hearthstonejson.com"):
 	config = orig_config.copy()
 
 	prefixes = [
-		("/v1/cards/orig/", "png"),
-		("/v1/cards/tiles/", "png"),
-		("/v1/cards/256x/", "jpg"),
-		("/v1/cards/512x/", "jpg"),
+		("v1/orig/", "png"),
+		("v1/tiles/", "png"),
+		("v1/256x/", "jpg"),
+		("v1/512x/", "jpg"),
 	]
 
 	config["RoutingRules"] = []
@@ -55,6 +55,8 @@ def update_art_404_redirects(s3, bucket="art.hearthstonejson.com"):
 			},
 			"Redirect": {
 				"ReplaceKeyWith": prefix + "XXX_001.%s" % (ext),
+				"HttpRedirectCode": "302",
+				"Protocol": "https",
 			}
 		})
 
