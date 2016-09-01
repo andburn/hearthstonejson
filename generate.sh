@@ -4,7 +4,6 @@ set -e
 BASEDIR="$(readlink -f $(dirname $0))"
 BUILDDIR="$BASEDIR/build"
 PROJECTURL="https://github.com/HearthSim/hearthstonejson.git"
-ARTDIR="/mnt/home/ngdp/card-art"
 HTMLDIR="$BUILDDIR/html"
 OUTDIR="$HTMLDIR/v1"
 PYTHON=${PYTHON:-python}
@@ -107,7 +106,11 @@ elif [[ $1 == "clean-upload" ]]; then
 	link_build "$maxbuild"
 elif [[ $1 == "sync-textures" ]]; then
 	echo "Syncing textures to S3"
-	aws s3 sync "$ARTDIR" "s3://$S3_ART_BUCKET_NAME/cards/by-id"
+	if [[ -z $2 ]]; then
+		>&2 echo "Usage: $0 $1 <input dir>"
+		exit 2
+	fi
+	aws s3 sync "$2" "s3://$S3_ART_BUCKET_NAME/cards/by-id"
 elif [[ $1 == "all" ]]; then
 	echo "Updating all builds"
 	for build in ${builds[@]}; do
