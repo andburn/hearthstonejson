@@ -169,7 +169,7 @@ def main():
 	tiles_dir = "tiles"
 	filter_ids = args.only.split(",") if args.only else []
 
-	for id, values in cards.items():
+	for id, values in sorted(cards.items()):
 		if filter_ids and id not in filter_ids:
 			continue
 
