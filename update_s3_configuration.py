@@ -7,11 +7,13 @@ from pprint import pprint
 
 def update_website_configuration(s3, build, bucket="api.hearthstonejson.com"):
 	print("Querying website configuration for %r" % (bucket))
-	config = s3.get_bucket_website(Bucket=bucket)
-	pprint(config)
+	orig_config = s3.get_bucket_website(Bucket=bucket)
+	pprint(orig_config)
 
-	if "ResponseMetadata" in config:
-		del config["ResponseMetadata"]
+	if "ResponseMetadata" in orig_config:
+		del orig_config["ResponseMetadata"]
+
+	config = orig_config.copy()
 
 	config["RoutingRules"] = [{
 		"Condition": {
@@ -24,10 +26,12 @@ def update_website_configuration(s3, build, bucket="api.hearthstonejson.com"):
 		},
 	}]
 
-	print("Updating website configuration")
-	pprint(config)
-
-	s3.put_bucket_website(Bucket=bucket, WebsiteConfiguration=config)
+	if config != orig_config:
+		print("Updating website configuration")
+		pprint(config)
+		s3.put_bucket_website(Bucket=bucket, WebsiteConfiguration=config)
+	else:
+		print("Website configuration up-to-date")
 
 
 def update_art_404_redirects(s3, bucket="art.hearthstonejson.com"):
