@@ -6,7 +6,7 @@ from argparse import ArgumentParser
 from enum import IntEnum
 from hearthstone.dbf import Dbf
 from hearthstone.cardxml import load
-from hearthstone.enums import CardType, Faction, GameTag, Locale, LOCALIZED_TAGS
+from hearthstone.enums import CardType, Faction, GameTag, Locale
 
 
 NBSP = "\u00A0"
@@ -82,17 +82,6 @@ def get_mechanics(card):
 	return ret
 
 
-TAG_NAMES = {
-	GameTag.CARDNAME: "name",
-	GameTag.FLAVORTEXT: "flavor",
-	GameTag.CARDTEXT_INHAND: "text",
-	GameTag.CardTextInPlay: "textInPlay",
-	GameTag.HOW_TO_EARN: "howToEarn",
-	GameTag.HOW_TO_EARN_GOLDEN: "howToEarnGolden",
-	GameTag.TARGETING_ARROW_TEXT: "targetingArrowText",
-}
-
-
 def serialize_card(card):
 	ret = {
 		"id": card.id,
@@ -150,14 +139,25 @@ def export_cards_to_file(cards, filename, locale):
 
 
 def export_all_locales_cards_to_file(cards, filename):
+	tag_names = {
+		GameTag.CARDNAME: "name",
+		GameTag.FLAVORTEXT: "flavor",
+		GameTag.CARDTEXT_INHAND: "text",
+		GameTag.CardTextInPlay: "textInPlay",
+		GameTag.HOW_TO_EARN: "howToEarn",
+		GameTag.HOW_TO_EARN_GOLDEN: "howToEarnGolden",
+		GameTag.TARGETING_ARROW_TEXT: "targetingArrowText",
+	}
 	ret = []
 	for card in cards:
 		obj = serialize_card(card)
-		for tag in LOCALIZED_TAGS:
-			if tag in TAG_NAMES:
-				value = card._localized_tags[tag]
-				if value:
-					obj[TAG_NAMES[tag]] = value
+		for tag, key in tag_names.items():
+			value = card._localized_tags[tag]
+			if key == "text":
+				for k, v in value.items():
+					value[k] = v.replace("_", NBSP)
+			if value:
+				obj[key] = value
 		ret.append(obj)
 
 	json_dump(ret, filename)
