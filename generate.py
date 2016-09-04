@@ -9,6 +9,7 @@ from hearthstone.cardxml import load
 from hearthstone.enums import CardType, Faction, GameTag, Locale, LOCALIZED_TAGS
 
 
+NBSP = "\u00A0"
 MECHANICS_TAGS = [
 	GameTag.ADJACENT_BUFF,
 	GameTag.AI_MUST_PLAY,
@@ -97,7 +98,7 @@ def serialize_card(card):
 		"id": card.id,
 		"name": card.name,
 		"flavor": card.flavortext,
-		"text": card.description,
+		"text": card.description.replace("_", NBSP),
 		"textInPlay": card.playtext,
 		"howToEarn": card.how_to_earn,
 		"howToEarnGolden": card.how_to_earn_golden,
