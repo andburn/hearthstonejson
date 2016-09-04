@@ -73,6 +73,11 @@ def get_mechanics(card):
 		value = card.tags.get(tag, 0)
 		if value:
 			ret.append(tag.name)
+
+	# AUTOATTACK is only a referenced mechanic. Kinda weird.
+	if card.referenced_tags.get(GameTag.AUTOATTACK):
+		ret.append(GameTag.AUTOATTACK.name)
+
 	return ret
 
 
