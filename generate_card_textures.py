@@ -27,7 +27,7 @@ def handle_asset(asset, textures, cards):
 				# not a real card
 				cards[cardid] = {"path": "", "tile": ""}
 				continue
-			if len(d.component) != 2:
+			if len(d.component) < 2:
 				# Not a CardDef
 				continue
 			carddef = d.component[1][1].resolve()
