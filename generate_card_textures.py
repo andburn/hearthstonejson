@@ -35,8 +35,11 @@ def handle_asset(asset, textures, cards):
 				# Not a CardDef
 				continue
 			path = carddef["m_PortraitTexturePath"]
-			if path:
-				path = "final/" + path
+			if not path:
+				# Sometimes there's multiple per cardid, we remove the ones without art
+				continue
+
+			path = "final/" + path
 
 			tile = carddef.get("m_DeckCardBarPortrait")
 			if tile:
