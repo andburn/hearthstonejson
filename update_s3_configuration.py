@@ -43,22 +43,22 @@ def update_art_404_redirects(s3, bucket="art.hearthstonejson.com"):
 	config = orig_config.copy()
 
 	prefixes = [
-		("v1/orig/", "png"),
-		("v1/tiles/", "png"),
-		("v1/256x/", "jpg"),
-		("v1/512x/", "jpg"),
+		("v1/orig/", "png", "XXX_001"),
+		("v1/tiles/", "png", "HERO_01"),
+		("v1/256x/", "jpg", "XXX_001"),
+		("v1/512x/", "jpg", "XXX_001"),
 	]
 
 	config["RoutingRules"] = []
 
-	for prefix, ext in prefixes:
+	for prefix, ext, fallback in prefixes:
 		config["RoutingRules"].append({
 			"Condition": {
 				"HttpErrorCodeReturnedEquals": "404",
 				"KeyPrefixEquals": prefix,
 			},
 			"Redirect": {
-				"ReplaceKeyWith": prefix + "XXX_001.%s" % (ext),
+				"ReplaceKeyWith": prefix + "%s.%s" % (fallback, ext),
 				"HttpRedirectCode": "302",
 				"Protocol": "https",
 			}
