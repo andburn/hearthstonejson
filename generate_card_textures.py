@@ -153,11 +153,56 @@ def get_filename(basedir, dirname, name, ext=".png"):
 	return path, os.path.exists(path)
 
 
+def do_texture(path, id, textures, values, thumb_sizes, args):
+	print("Parsing %r (%r)" % (id, path))
+	if not path:
+		print("%r does not have a texture" % (id))
+		return
+
+	if path not in textures:
+		print("Path %r not found for %r" % (path, id))
+		return
+
+	pptr = textures[path]
+	texture = pptr.resolve()
+	flipped = None
+
+	filename, exists = get_filename(args.outdir, args.orig_dir, id, ext=".png")
+	if not (args.skip_existing and exists):
+		print("-> %r" % (filename))
+		flipped = ImageOps.flip(texture.image).convert("RGB")
+		flipped.save(filename)
+
+	for ext in (".jpg", ".png", ".webp"):
+		if values["tile"]:
+			filename, exists = get_filename(args.outdir, args.tiles_dir, id, ext=ext)
+			if not (args.skip_existing and exists):
+				tile_texture = generate_tile_image(texture.image, values["tile"])
+				print("-> %r" % (filename))
+				tile_texture.save(filename)
+
+		if ext == ".png":
+			# skip png generation for thumbnails
+			continue
+		for sz in thumb_sizes:
+			thumb_dir = "%ix" % (sz)
+			filename, exists = get_filename(args.outdir, thumb_dir, id, ext=ext)
+			if not (args.skip_existing and exists):
+				if not flipped:
+					flipped = ImageOps.flip(texture.image).convert("RGB")
+				thumb_texture = flipped.resize((sz, sz))
+				print("-> %r" % (filename))
+				thumb_texture.save(filename)
+
+
 def main():
 	p = ArgumentParser()
 	p.add_argument("--outdir", nargs="?", default="")
 	p.add_argument("--skip-existing", action="store_true")
 	p.add_argument("--only", type=str, nargs="?", help="Extract specific IDs")
+	p.add_argument("--orig-dir", type=str, default="orig", help="Name of output for originals")
+	p.add_argument("--tiles-dir", type=str, default="tiles", help="Name of output for tiles")
+	p.add_argument("--traceback", action="store_true", help="Raise errors during conversion")
 	p.add_argument("files", nargs="+")
 	args = p.parse_args(sys.argv[1:])
 
@@ -167,9 +212,7 @@ def main():
 		len(cards), len(textures), len(set(paths))
 	))
 
-	orig_dir = "orig"
 	thumb_sizes = (256, 512)
-	tiles_dir = "tiles"
 	filter_ids = args.only.split(",") if args.only else []
 
 	for id, values in sorted(cards.items()):
@@ -177,45 +220,12 @@ def main():
 			continue
 
 		path = values["path"]
-		print("Parsing %r (%r)" % (id, path))
-		if not path:
-			print("%r does not have a texture" % (id))
-			continue
-
-		if path not in textures:
-			print("Path %r not found for %r" % (path, id))
-			continue
-
-		pptr = textures[path]
-		texture = pptr.resolve()
-		flipped = None
-
-		filename, exists = get_filename(args.outdir, orig_dir, id, ext=".png")
-		if not (args.skip_existing and exists):
-			print("-> %r" % (filename))
-			flipped = ImageOps.flip(texture.image).convert("RGB")
-			flipped.save(filename)
-
-		for ext in (".jpg", ".png", ".webp"):
-			if values["tile"]:
-				filename, exists = get_filename(args.outdir, tiles_dir, id, ext=ext)
-				if not (args.skip_existing and exists):
-					tile_texture = generate_tile_image(texture.image, values["tile"])
-					print("-> %r" % (filename))
-					tile_texture.save(filename)
-
-			if ext == ".png":
-				# skip png generation for thumbnails
-				continue
-			for sz in thumb_sizes:
-				thumb_dir = "%ix" % (sz)
-				filename, exists = get_filename(args.outdir, thumb_dir, id, ext=ext)
-				if not (args.skip_existing and exists):
-					if not flipped:
-						flipped = ImageOps.flip(texture.image).convert("RGB")
-					thumb_texture = flipped.resize((sz, sz))
-					print("-> %r" % (filename))
-					thumb_texture.save(filename)
+		try:
+			do_texture(path, id, textures, values, thumb_sizes, args)
+		except Exception as e:
+			sys.stderr.write("ERROR on %r (%r): %s (Use --traceback for details)\n" % (path, id, e))
+			if args.traceback:
+				raise
 
 
 if __name__ == "__main__":
