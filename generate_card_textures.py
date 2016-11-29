@@ -190,28 +190,32 @@ def main():
 		texture = pptr.resolve()
 		flipped = None
 
-		filename, exists = get_filename(args.outdir, orig_dir, id)
+		filename, exists = get_filename(args.outdir, orig_dir, id, ext=".png")
 		if not (args.skip_existing and exists):
 			print("-> %r" % (filename))
 			flipped = ImageOps.flip(texture.image).convert("RGB")
 			flipped.save(filename)
 
-		if values["tile"]:
-			filename, exists = get_filename(args.outdir, tiles_dir, id)
-			if not (args.skip_existing and exists):
-				tile_texture = generate_tile_image(texture.image, values["tile"])
-				print("-> %r" % (filename))
-				tile_texture.save(filename)
+		for ext in (".jpg", ".png", ".webp"):
+			if values["tile"]:
+				filename, exists = get_filename(args.outdir, tiles_dir, id, ext=ext)
+				if not (args.skip_existing and exists):
+					tile_texture = generate_tile_image(texture.image, values["tile"])
+					print("-> %r" % (filename))
+					tile_texture.save(filename)
 
-		for sz in thumb_sizes:
-			thumb_dir = "%ix" % (sz)
-			filename, exists = get_filename(args.outdir, thumb_dir, id, ext=".jpg")
-			if not (args.skip_existing and exists):
-				if not flipped:
-					flipped = ImageOps.flip(texture.image).convert("RGB")
-				thumb_texture = flipped.resize((sz, sz))
-				print("-> %r" % (filename))
-				thumb_texture.save(filename)
+			if ext == ".png":
+				# skip png generation for thumbnails
+				continue
+			for sz in thumb_sizes:
+				thumb_dir = "%ix" % (sz)
+				filename, exists = get_filename(args.outdir, thumb_dir, id, ext=ext)
+				if not (args.skip_existing and exists):
+					if not flipped:
+						flipped = ImageOps.flip(texture.image).convert("RGB")
+					thumb_texture = flipped.resize((sz, sz))
+					print("-> %r" % (filename))
+					thumb_texture.save(filename)
 
 
 if __name__ == "__main__":
