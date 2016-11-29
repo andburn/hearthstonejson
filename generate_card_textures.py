@@ -57,8 +57,8 @@ def extract_info(files):
 
 	for file in files:
 		print("Reading %r" % (file))
-		with open(file, "rb") as f:
-			bundle = unitypack.load(f, env)
+		f = open(file, "rb")
+		bundle = unitypack.load(f, env)
 
 		for asset in bundle.assets:
 			print("Parsing %r" % (asset.name))
