@@ -123,6 +123,9 @@ elif [[ $1 =~ ^[0-9]+$ ]]; then
 	echo "Updating build $1"
 	update_build "$1"
 	update_indexes "$1"
+	if [[ $1 == $maxbuild ]]; then
+		update_enums
+	fi
 	upload_to_s3 "$1"
 	link_build "$maxbuild"
 else
