@@ -73,14 +73,7 @@ function update_indexes() {
 function upload_to_s3() {
 	build="$1"
 
-	aws s3 cp "$HTMLDIR/index.html" "$S3_BUCKET/index.html"
-
-	if [[ ! -z $build ]]; then
-		aws s3 cp "$OUTDIR/index.html" "$S3_BUCKET/v1/index.html"
-		aws s3 cp "$OUTDIR/$build" "$S3_BUCKET/v1/$build" --recursive
-	else
-		aws s3 cp "$OUTDIR/" "$S3_BUCKET/v1" --recursive
-	fi
+	aws s3 sync "$OUTDIR" "$S3_BUCKET/v1"
 }
 
 
@@ -95,7 +88,7 @@ if [[ -z $1 || $1 == "latest" ]]; then
 	update_build "$maxbuild"
 	update_enums
 	update_indexes
-	upload_to_s3 "$maxbuild"
+	upload_to_s3
 	link_build "$maxbuild"
 elif [[ $1 == "clean-upload" ]]; then
 	echo "Preparing for S3 upload"
@@ -126,7 +119,7 @@ elif [[ $1 =~ ^[0-9]+$ ]]; then
 	if [[ $1 == $maxbuild ]]; then
 		update_enums
 	fi
-	upload_to_s3 "$1"
+	upload_to_s3
 	link_build "$maxbuild"
 else
 	>&2 echo "Usage: $0 [BUILD | latest | all | clean-upload]"
